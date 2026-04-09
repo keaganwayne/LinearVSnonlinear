@@ -21,7 +21,7 @@
     h1, h2, h3, p { margin: 0; }
     #questionPrompt { font-size: 28px; margin-bottom: 10px; }
     #questionBody { margin-top: 12px; min-height: 112px; font-size: 22px; }
-    .math-line { font-size: 28px; margin-top: 10px; line-height: 1.25; }
+    .math-line { font-size: 28px; margin-top: 10px; }
     .prompt-note { margin-top: 10px; font-size: 15px; color: #4b5563; }
     .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
     button { border: none; border-radius: 12px; padding: 12px 14px; font-size: 16px; cursor: pointer; }
@@ -46,51 +46,16 @@
     table.data th, table.data td { border: 1px solid #cbd5e1; padding: 8px 14px; text-align: center; }
     .draw-box { margin-top: 14px; padding: 12px; background: #eff6ff; border-radius: 12px; font-size: 15px; color: #1e3a8a; line-height: 1.45; }
     .hidden { display: none; }
-    .frac {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      vertical-align: middle;
-      margin: 0 0.1em;
-      line-height: 1.05;
-      font-size: 0.95em;
-    }
-    .frac .top {
-      display: block;
-      padding: 0 0.18em 0.06em;
-      border-bottom: 2px solid currentColor;
-    }
-    .frac .bottom {
-      display: block;
-      padding: 0.06em 0.18em 0;
-    }
-    .sqrt {
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: flex-start;
-      vertical-align: middle;
-    }
-    .sqrt .root {
-      font-size: 1.15em;
-      line-height: 1;
-      margin-right: 0.02em;
-      transform: translateY(0.03em);
-    }
-    .sqrt .radicand {
-      border-top: 2px solid currentColor;
-      padding: 0.02em 0.16em 0;
-      line-height: 1.05;
-    }
-    .math-line sup {
-      font-size: 0.62em;
-      vertical-align: super;
-    }
     @media (max-width: 1100px) {
       .main { grid-template-columns: 1fr; }
       .topbar { grid-template-columns: 1fr; }
       .graph-shell { height: 500px; }
     }
   </style>
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
   <div class="wrap">
@@ -155,7 +120,8 @@
     </div>
   </div>
 
-  <script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=YOUR_API_KEY_HERE"></script>
+  <!-- Replace YOUR_API_KEY_HERE with your own Desmos API key from desmos.com/my-api -->
+  <script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=a062d41e95cc42da9f63619f14e8142d"></script>
   <script>
     const VIEW = { left: -8, right: 8, bottom: -8, top: 8 };
     const AXIS_EXPRESSIONS = [
@@ -195,45 +161,16 @@
     function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
     function nonZeroInt(min, max) { let n = 0; while (n === 0) n = randInt(min, max); return n; }
     function pick(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function signed(n) { return n >= 0 ? `+ ${n}` : `- ${Math.abs(n)}`; }
     function trimNum(n) { return Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2))); }
-
-    function escapeHtml(s) {
-      return String(s)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;');
-    }
-
-    function fracHtml(top, bottom) {
-      return '<span class="frac"><span class="top">' + top + '</span><span class="bottom">' + bottom + '</span></span>';
-    }
-
-    function sqrtHtml(content) {
-      return '<span class="sqrt"><span class="root">√</span><span class="radicand">' + content + '</span></span>';
-    }
-
-    function displayExprToHtml(expr) {
-      let s = expr;
-      s = s.replace(/\\tan\(([^)]+)\)/g, 'tan($1)');
-      s = s.replace(/\\sin\(([^)]+)\)/g, 'sin($1)');
-      s = s.replace(/\\cos\(([^)]+)\)/g, 'cos($1)');
-      s = s.replace(/\\sqrt\{([^}]+)\}/g, function(_, inside) { return sqrtHtml(escapeHtml(inside)); });
-      s = s.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, function(_, top, bottom) { return fracHtml(escapeHtml(top), escapeHtml(bottom)); });
-      s = s.replace(/([a-zA-Z0-9)\]])\^\{([^}]+)\}/g, '$1<sup>$2</sup>');
-      s = s.replace(/([a-zA-Z0-9)\]])\^(-?\d+)/g, '$1<sup>$2</sup>');
-      s = s.replace(/\*/g, '');
-      return s;
-    }
-
-    function mathLine(expr) {
-      return '<div class="math-line">' + displayExprToHtml(expr) + '</div>';
-    }
 
     function formatLinearText(m, b) {
       const first = m === 1 ? 'x' : m === -1 ? '-x' : `${m}x`;
       if (b === 0) return `y=${first}`;
       return `y=${first}${b > 0 ? '+' + b : b}`;
     }
+
+    function toLatexText(text) { return `\\(${text}\\)`; }
 
     function updateStats() {
       questionNumberEl.textContent = questionNumber;
@@ -353,7 +290,7 @@
         type: 'Equation classification',
         mode: 'choice',
         prompt: 'Is this equation linear or non-linear?',
-        bodyHtml: mathLine(formatLinearText(m, b)),
+        bodyHtml: `<div class="math-line">${toLatexText(formatLinearText(m, b))}</div>`,
         answer: 'Linear',
         explain: 'It is in the form y = mx + b, so it graphs as a straight line.',
         graphExpressions: [{ id: 'graph', latex: `y=${m}x+(${b})`, color: Desmos.Colors.BLUE }]
@@ -379,7 +316,7 @@
         type: 'Equation classification',
         mode: 'choice',
         prompt: 'Is this equation linear or non-linear?',
-        bodyHtml: mathLine(q.text),
+        bodyHtml: `<div class="math-line">${toLatexText(q.text)}</div>`,
         answer: 'Non-linear',
         explain: q.explain,
         graphExpressions: [{ id: 'graph', latex: q.graph, color: Desmos.Colors.BLUE }]
@@ -470,7 +407,7 @@
         type: 'Graph a line',
         mode: 'draw',
         prompt: 'Graph this equation by clicking two integer points.',
-        bodyHtml: mathLine(formatLinearText(m, b)),
+        bodyHtml: `<div class="math-line">${toLatexText(formatLinearText(m, b))}</div>`,
         explain: `The correct line has slope ${m} and y-intercept ${b}.`,
         expected: { m, b }
       };
@@ -506,8 +443,10 @@
       }
 
       if (currentQuestion.type === 'Graph classification') plotReferenceGraph();
+
       updateStats();
       updateStars();
+      if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise([questionBodyEl]).catch(() => {});
     }
 
     function resetStreak() {
