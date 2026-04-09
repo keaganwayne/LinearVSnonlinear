@@ -3,389 +3,197 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8FA2 + 8FA3 Linear / Non-Linear Practice</title>
+  <title>Linear vs Non-Linear Practice</title>
   <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --line: #d9dce6;
-      --text: #1d2433;
-      --muted: #667085;
-      --good: #157347;
-      --bad: #b42318;
-      --accent: #275efe;
-      --gold: #f5b301;
-    }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    .wrap {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 18px;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .titleblock h1 { margin: 0 0 6px 0; }
-    .titleblock p { margin: 0; color: var(--muted); }
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .mini-card, .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.04);
-    }
-    .mini-card {
-      padding: 12px 14px;
-      min-width: 170px;
-    }
-    .metric-label {
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      margin-bottom: 4px;
-    }
-    .metric-value {
-      font-size: 24px;
-      font-weight: 700;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 440px 1fr;
-      gap: 16px;
-    }
-    .card { padding: 16px; }
-    .pill {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: #eef3ff;
-      color: #2446ad;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .prompt {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 12px 0;
-    }
-    .answer-block {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #fafbff;
-      border: 1px dashed var(--line);
-    }
-    .choice-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .choice {
-      padding: 13px 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      cursor: pointer;
-      background: white;
-      text-align: left;
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .choice.selected {
-      border-color: var(--accent);
-      outline: 2px solid rgba(39,94,254,.15);
-    }
-    .feedback {
-      min-height: 24px;
-      margin-top: 14px;
-      font-weight: 700;
-    }
-    .good { color: var(--good); }
-    .bad { color: var(--bad); }
-    .muted { color: var(--muted); }
-    .statusrow {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    button {
-      border: 1px solid var(--line);
-      background: #fff;
-      padding: 10px 14px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    button.primary {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    button.corner-btn {
-      padding: 8px 12px;
-      font-size: 13px;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .graph-shell {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      min-height: 620px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      background: #fff;
-    }
-    #calculator {
-      position: absolute;
-      inset: 0;
-    }
-    #overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-    }
-    .graph-footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .graph-notes {
-      color: var(--muted);
-      font-size: 14px;
-      max-width: 75%;
-      line-height: 1.45;
-    }
-    .stars {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-    .star {
-      font-size: 22px;
-      line-height: 1;
-      color: #d0d5dd;
-    }
-    .star.filled { color: var(--gold); }
-    .goal-box {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #fff9e8;
-      border: 1px solid #f1d48a;
-      font-weight: 700;
-    }
-    table.data {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 6px;
-      font-size: 15px;
-    }
-    table.data th, table.data td {
-      border: 1px solid var(--line);
-      padding: 8px 10px;
-      text-align: center;
-    }
-
-    .math {
-      font-size: 28px;
-      line-height: 1.4;
-    }
-    .frac {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      vertical-align: middle;
-      margin: 0 .1em;
-      line-height: 1;
-    }
-    .frac .top, .frac .bottom {
-      display: block;
-      padding: 0 .18em;
-      font-size: .9em;
-    }
-    .frac .bar {
-      display: block;
-      width: 100%;
-      border-top: 2px solid currentColor;
-      margin: .08em 0;
-    }
-    .sqrt {
-      display: inline-flex;
-      align-items: flex-start;
-      vertical-align: middle;
-    }
-    .sqrt .radicand {
-      display: inline-block;
-      border-top: 2px solid currentColor;
-      padding: 0 .16em 0 .2em;
-      margin-left: .08em;
-    }
-    .hidden { display: none !important; }
-    @media (max-width: 1020px) {
-      .grid { grid-template-columns: 1fr; }
-      .graph-shell { min-height: 420px; }
-      .graph-notes { max-width: 100%; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f6f8; color: #1f2937; }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 18px; }
+    .topbar { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .panel { background: white; border-radius: 16px; padding: 14px 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .stats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 15px; line-height: 1.5; }
+    .stat b { font-size: 20px; }
+    .stars { display: flex; gap: 4px; flex-wrap: wrap; font-size: 28px; line-height: 1; margin-top: 6px; min-height: 34px; }
+    .star { opacity: 0.2; }
+    .star.on { opacity: 1; }
+    .goal { font-size: 15px; margin-top: 8px; }
+    .main { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .question-type { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #e8f0ff; color: #174ea6; font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+    h1, h2, h3, p { margin: 0; }
+    #questionPrompt { font-size: 28px; margin-bottom: 10px; }
+    #questionBody { margin-top: 12px; min-height: 112px; font-size: 22px; }
+    .math-line { font-size: 28px; margin-top: 10px; }
+    .prompt-note { margin-top: 10px; font-size: 15px; color: #4b5563; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    button { border: none; border-radius: 12px; padding: 12px 14px; font-size: 16px; cursor: pointer; }
+    .choice-btn { background: #f3f4f6; font-weight: 700; border: 2px solid transparent; }
+    .choice-btn.selected { border-color: #2563eb; background: #dbeafe; }
+    .control-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .primary { background: #2563eb; color: white; font-weight: 700; }
+    .secondary { background: #e5e7eb; color: #111827; font-weight: 700; }
+    .danger-lite { background: #fef3c7; color: #92400e; font-weight: 700; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .feedback { margin-top: 16px; min-height: 54px; padding: 12px 14px; border-radius: 12px; font-size: 16px; line-height: 1.45; }
+    .good { background: #dcfce7; color: #166534; }
+    .bad { background: #fee2e2; color: #991b1b; }
+    .muted { background: #f3f4f6; color: #374151; }
+    .graph-shell { position: relative; width: 100%; height: 620px; border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid #e5e7eb; }
+    #calculator { width: 100%; height: 100%; }
+    #overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .graph-footer { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; margin-top: 10px; }
+    .graph-notes { font-size: 15px; color: #4b5563; line-height: 1.45; }
+    .corner-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    table.data { border-collapse: collapse; min-width: 280px; font-size: 20px; margin-top: 6px; }
+    table.data th, table.data td { border: 1px solid #cbd5e1; padding: 8px 14px; text-align: center; }
+    .draw-box { margin-top: 14px; padding: 12px; background: #eff6ff; border-radius: 12px; font-size: 15px; color: #1e3a8a; line-height: 1.45; }
+    .hidden { display: none; }
+    @media (max-width: 1100px) {
+      .main { grid-template-columns: 1fr; }
+      .topbar { grid-template-columns: 1fr; }
+      .graph-shell { height: 500px; }
     }
   </style>
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
   <div class="wrap">
     <div class="topbar">
-      <div class="titleblock">
-        <h1>8FA2 + 8FA3 Linear / Non-Linear Practice</h1>
-        <p>Unlimited questions. Build a streak of 10 correct answers to complete the preparation lesson.</p>
-      </div>
-      <div class="stats">
-        <div class="mini-card">
-          <div class="metric-label">Current streak</div>
-          <div class="metric-value"><span id="streak">0</span> / 10</div>
-          <div class="stars" id="stars"></div>
-        </div>
-        <div class="mini-card">
-          <div class="metric-label">Correct</div>
-          <div class="metric-value" id="correctCount">0</div>
-        </div>
-        <div class="mini-card">
-          <div class="metric-label">Total answered</div>
-          <div class="metric-value" id="totalAnswered">0</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <section class="card">
-        <div class="pill" id="questionType">Question type</div>
-        <div class="prompt" id="questionTitle">Loading...</div>
-        <div id="questionBody"></div>
-        <div id="choices" class="choice-list"></div>
-        <div id="graphTaskText" class="answer-block hidden"></div>
-        <div class="feedback" id="feedback"></div>
-        <div class="statusrow">
-          <div>Question number: <span id="questionNumber">1</span></div>
-          <div id="drawStatus">Choose an answer or place two points when needed.</div>
-        </div>
-        <div class="goal-box" id="goalBox">Goal: answer 10 questions in a row correctly.</div>
-        <div class="controls">
-          <button id="checkBtn" class="primary">Check answer</button>
-          <button id="nextBtn" disabled>Next question</button>
-          <button id="resetDrawBtn" class="hidden">Reset drawing</button>
+      <section class="panel">
+        <div class="stats">
+          <div class="stat">Question<br><b id="questionNumber">1</b></div>
+          <div class="stat">Correct<br><b id="correctCount">0</b></div>
+          <div class="stat">Answered<br><b id="answeredCount">0</b></div>
+          <div class="stat">Streak<br><b id="streakCount">0</b></div>
         </div>
       </section>
+      <section class="panel">
+        <h3>10-Star Goal</h3>
+        <div class="stars" id="stars"></div>
+        <div class="goal" id="goalText">Get 10 correct in a row.</div>
+      </section>
+      <section class="panel">
+        <h3>Rule</h3>
+        <div style="font-size:15px; line-height:1.5; margin-top:6px;">
+          Wrong answer = streak resets to 0.<br>
+          Show Answer = streak resets to 0.<br>
+          Practice continues forever.
+        </div>
+      </section>
+    </div>
 
-      <section class="card">
+    <div class="main">
+      <section class="panel">
+        <div class="question-type" id="questionType">Equation classification</div>
+        <h2 id="questionPrompt">Is this linear or non-linear?</h2>
+        <div id="questionBody"></div>
+
+        <div class="choices" id="choices"></div>
+        <div class="draw-box hidden" id="drawBox">
+          Click exactly two integer points on the graph. A dot will appear for each point, and then your line will appear.
+        </div>
+
+        <div class="control-row">
+          <button class="primary" id="checkBtn">Check Answer</button>
+          <button class="secondary" id="nextBtn" disabled>Next Question</button>
+          <button class="secondary hidden" id="resetDrawBtn">Reset Drawing</button>
+        </div>
+
+        <div class="feedback muted" id="feedback">Choose an answer or start graphing when needed.</div>
+      </section>
+
+      <section class="panel">
         <div class="graph-shell">
           <div id="calculator"></div>
           <svg id="overlay" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
         </div>
         <div class="graph-footer">
           <div class="graph-notes" id="graphNotes">
-            For graphing questions, students click two points. The graph will show the points and the line they made.
+            For graphing questions, students click two points. For table and equation questions, the graph will appear after Check Answer or Show Answer.
           </div>
-          <div>
-            <button id="showAnswerBtn" class="corner-btn">Show answer</button>
+          <div class="corner-wrap">
+            <button class="danger-lite" id="showAnswerBtn">Show Answer</button>
           </div>
         </div>
       </section>
     </div>
   </div>
 
-  <!-- Replace YOUR_API_KEY_HERE with your real API key from desmos.com/my-api -->
+  <!-- Replace YOUR_API_KEY_HERE with your own Desmos API key from desmos.com/my-api -->
   <script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=a062d41e95cc42da9f63619f14e8142d"></script>
   <script>
-    const VIEW = { left: -10, right: 10, bottom: -10, top: 10 };
-    const choices = ['Linear', 'Non-linear'];
-    const trigLabels = ['sin(x)', 'cos(x)', 'tan(x)'];
-    const questionType = document.getElementById('questionType');
-    const questionTitle = document.getElementById('questionTitle');
-    const questionBody = document.getElementById('questionBody');
-    const choicesEl = document.getElementById('choices');
-    const graphTaskText = document.getElementById('graphTaskText');
-    const feedback = document.getElementById('feedback');
-    const drawStatus = document.getElementById('drawStatus');
-    const questionNumberEl = document.getElementById('questionNumber');
-    const correctCountEl = document.getElementById('correctCount');
-    const totalAnsweredEl = document.getElementById('totalAnswered');
-    const streakEl = document.getElementById('streak');
-    const goalBox = document.getElementById('goalBox');
-    const starsEl = document.getElementById('stars');
-    const checkBtn = document.getElementById('checkBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const resetDrawBtn = document.getElementById('resetDrawBtn');
-    const showAnswerBtn = document.getElementById('showAnswerBtn');
-    const graphNotes = document.getElementById('graphNotes');
-    const overlay = document.getElementById('overlay');
+    const VIEW = { left: -8, right: 8, bottom: -8, top: 8 };
+    const AXIS_EXPRESSIONS = [
+      { id: 'xaxis', latex: 'y=0', color: '#6b7280', lineOpacity: 0.5 },
+      { id: 'yaxis', latex: 'x=0', color: '#6b7280', lineOpacity: 0.5 }
+    ];
 
-    let calculator;
-    let currentQuestion = null;
-    let selectedChoice = null;
-    let answered = false;
+    const $ = (id) => document.getElementById(id);
+    const questionNumberEl = $('questionNumber');
+    const correctCountEl = $('correctCount');
+    const answeredCountEl = $('answeredCount');
+    const streakCountEl = $('streakCount');
+    const starsEl = $('stars');
+    const goalTextEl = $('goalText');
+    const questionTypeEl = $('questionType');
+    const questionPromptEl = $('questionPrompt');
+    const questionBodyEl = $('questionBody');
+    const choicesEl = $('choices');
+    const drawBoxEl = $('drawBox');
+    const feedbackEl = $('feedback');
+    const graphNotesEl = $('graphNotes');
+    const checkBtn = $('checkBtn');
+    const nextBtn = $('nextBtn');
+    const resetDrawBtn = $('resetDrawBtn');
+    const showAnswerBtn = $('showAnswerBtn');
+
+    let calculator = null;
     let questionNumber = 1;
     let correctCount = 0;
-    let totalAnswered = 0;
+    let answeredCount = 0;
     let streak = 0;
+    let selectedChoice = null;
+    let answeredThisQuestion = false;
+    let currentQuestion = null;
     let drawPoints = [];
 
-    function randInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function nonZeroInt(min, max) { let n = 0; while (n === 0) n = randInt(min, max); return n; }
+    function pick(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function signed(n) { return n >= 0 ? `+ ${n}` : `- ${Math.abs(n)}`; }
+    function trimNum(n) { return Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2))); }
+
+    function formatLinearText(m, b) {
+      const first = m === 1 ? 'x' : m === -1 ? '-x' : `${m}x`;
+      if (b === 0) return `y=${first}`;
+      return `y=${first}${b > 0 ? '+' + b : b}`;
     }
 
-    function pick(arr) {
-      return arr[randInt(0, arr.length - 1)];
-    }
+    function toLatexText(text) { return `\\(${text}\\)`; }
 
-    function nonZeroInt(min, max) {
-      let n = 0;
-      while (n === 0) n = randInt(min, max);
-      return n;
+    function updateStats() {
+      questionNumberEl.textContent = questionNumber;
+      correctCountEl.textContent = correctCount;
+      answeredCountEl.textContent = answeredCount;
+      streakCountEl.textContent = streak;
     }
 
     function updateStars() {
       starsEl.innerHTML = '';
       for (let i = 1; i <= 10; i++) {
         const span = document.createElement('span');
-        span.className = 'star' + (i <= streak ? ' filled' : '');
         span.textContent = '★';
+        span.className = 'star' + (i <= streak ? ' on' : '');
         starsEl.appendChild(span);
       }
-      streakEl.textContent = streak;
-      if (streak >= 10) {
-        goalBox.textContent = 'Completed: 10 stars reached. Keep going if you want more practice.';
-      } else {
-        goalBox.textContent = `Goal: answer 10 questions in a row correctly. ${10 - streak} more to go.`;
-      }
+      goalTextEl.textContent = streak >= 10 ? '10 stars reached. Keep going for more practice.' : `Get ${10 - streak} more correct in a row.`;
+    }
+
+    function resetGraph() {
+      calculator.setBlank();
+      calculator.setMathBounds(VIEW);
+      calculator.setExpressions(AXIS_EXPRESSIONS);
     }
 
     function initCalculator() {
@@ -394,153 +202,124 @@
         settingsMenu: false,
         zoomButtons: false,
         keypad: false,
-        lockViewport: true,
         pointsOfInterest: false,
         trace: false,
+        lockViewport: true,
         border: false,
-        expressionsCollapsed: true,
-        xAxisStep: 1,
-        yAxisStep: 1,
+        expressionsCollapsed: true
       });
-      calculator.updateSettings({ xAxisStep: 1, yAxisStep: 1 });
-      resetCalculator();
+      resetGraph();
     }
 
-    function baseExpressions() {
-      return [
-        { id: 'xaxis', latex: 'y=0', lineOpacity: 0.35, color: '#999999' },
-        { id: 'yaxis', latex: 'x=0', lineOpacity: 0.35, color: '#999999' }
-      ];
-    }
-
-    function resetCalculator() {
+    function setExpressions(exprs) {
       calculator.setBlank();
       calculator.setMathBounds(VIEW);
-      calculator.setExpressions(baseExpressions());
+      calculator.setExpressions([...AXIS_EXPRESSIONS, ...exprs]);
+    }
+
+    function plotReferenceGraph() {
+      if (!currentQuestion || !currentQuestion.graphExpressions) return;
+      setExpressions(currentQuestion.graphExpressions);
+    }
+
+    function plotStudentObjects(showAnswerLine = false) {
+      const exprs = [];
+      if (currentQuestion && currentQuestion.mode !== 'draw' && currentQuestion.graphExpressions) {
+        exprs.push(...currentQuestion.graphExpressions);
+      }
+      if (drawPoints[0]) exprs.push({ id: 'p1', latex: `(${drawPoints[0].x},${drawPoints[0].y})`, pointSize: 14, color: Desmos.Colors.BLUE });
+      if (drawPoints[1]) exprs.push({ id: 'p2', latex: `(${drawPoints[1].x},${drawPoints[1].y})`, pointSize: 14, color: Desmos.Colors.GREEN });
+
+      if (drawPoints.length === 2) {
+        const a = drawPoints[0], b = drawPoints[1];
+        if (a.x === b.x) {
+          exprs.push({ id: 'studentLine', latex: `x=${a.x}`, color: Desmos.Colors.RED, lineWidth: 3 });
+        } else {
+          const m = (b.y - a.y) / (b.x - a.x);
+          const c = a.y - m * a.x;
+          exprs.push({ id: 'studentLine', latex: `y=${m}x+(${c})`, color: Desmos.Colors.RED, lineWidth: 3 });
+        }
+      }
+
+      if (showAnswerLine && currentQuestion && currentQuestion.mode === 'draw') {
+        exprs.push({
+          id: 'answerLine',
+          latex: `y=${currentQuestion.expected.m}x+(${currentQuestion.expected.b})`,
+          color: Desmos.Colors.BLACK,
+          lineWidth: 3,
+          lineStyle: Desmos.Styles.DASHED
+        });
+      }
+      setExpressions(exprs);
     }
 
     function clearForNewQuestion() {
-      resetCalculator();
       selectedChoice = null;
-      answered = false;
+      answeredThisQuestion = false;
       drawPoints = [];
-      feedback.textContent = '';
-      feedback.className = 'feedback';
       nextBtn.disabled = true;
-      overlay.style.pointerEvents = 'none';
-      graphTaskText.classList.add('hidden');
-      resetDrawBtn.classList.add('hidden');
-      drawStatus.textContent = 'Choose an answer or place two points when needed.';
-      graphNotes.textContent = 'For graphing questions, students click two points. The graph will show the points and the line they made.';
+      feedbackEl.className = 'feedback muted';
+      feedbackEl.textContent = 'Choose an answer or start graphing when needed.';
       choicesEl.innerHTML = '';
+      drawBoxEl.classList.add('hidden');
+      resetDrawBtn.classList.add('hidden');
+      graphNotesEl.textContent = 'For graphing questions, students click two points. For table and equation questions, the graph will appear after Check Answer or Show Answer.';
+      document.getElementById('overlay').style.pointerEvents = 'none';
+      resetGraph();
     }
 
-    function renderChoiceButtons() {
-      choicesEl.innerHTML = '';
-      choices.forEach(choice => {
+    function makeChoiceButtons() {
+      ['Linear', 'Non-linear'].forEach(choice => {
         const btn = document.createElement('button');
-        btn.className = 'choice';
+        btn.className = 'choice-btn';
         btn.textContent = choice;
         btn.addEventListener('click', () => {
-          if (answered) return;
+          if (answeredThisQuestion) return;
           selectedChoice = choice;
-          [...choicesEl.children].forEach(el => el.classList.remove('selected'));
+          [...choicesEl.children].forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
         });
         choicesEl.appendChild(btn);
       });
     }
 
-    function setGraphCurve(latex) {
-      calculator.setExpressions([
-        ...baseExpressions(),
-        { id: 'curve', latex, color: Desmos.Colors.BLUE }
-      ]);
-    }
-
-    function renderStudentObjects() {
-      const exprs = [...baseExpressions()];
-      if (currentQuestion && currentQuestion.setupGraph && !currentQuestion.isGraphingTask) {
-        exprs.push({ id: 'curve', latex: currentQuestion.graphLatex, color: Desmos.Colors.BLUE });
-      }
-      if (drawPoints[0]) {
-        exprs.push({ id: 'p1', latex: `(${drawPoints[0].x},${drawPoints[0].y})`, pointSize: 12, color: Desmos.Colors.BLUE });
-      }
-      if (drawPoints[1]) {
-        exprs.push({ id: 'p2', latex: `(${drawPoints[1].x},${drawPoints[1].y})`, pointSize: 12, color: Desmos.Colors.GREEN });
-      }
-      if (drawPoints.length === 2) {
-        const a = drawPoints[0];
-        const b = drawPoints[1];
-        if (a.x === b.x) {
-          exprs.push({ id: 'studentLine', latex: `x=${a.x}`, color: Desmos.Colors.RED, lineWidth: 3 });
-        } else {
-          const m = (b.y - a.y) / (b.x - a.x);
-          const intercept = a.y - m * a.x;
-          exprs.push({ id: 'studentLine', latex: `y=${m}x+(${intercept})`, color: Desmos.Colors.RED, lineWidth: 3 });
-        }
-      }
-      calculator.setExpressions(exprs);
-    }
-
-    function showCorrectGraph() {
-      if (!currentQuestion) return;
-      const exprs = [...baseExpressions()];
-      if (currentQuestion.mode === 'choice' && currentQuestion.graphLatex) {
-        exprs.push({ id: 'curve', latex: currentQuestion.graphLatex, color: Desmos.Colors.BLUE });
-      }
-      if (currentQuestion.mode === 'draw') {
-        const { m, b } = currentQuestion.expected;
-        if (drawPoints[0]) exprs.push({ id: 'p1', latex: `(${drawPoints[0].x},${drawPoints[0].y})`, pointSize: 12, color: Desmos.Colors.BLUE });
-        if (drawPoints[1]) exprs.push({ id: 'p2', latex: `(${drawPoints[1].x},${drawPoints[1].y})`, pointSize: 12, color: Desmos.Colors.GREEN });
-        if (drawPoints.length === 2) {
-          const a = drawPoints[0];
-          const b2 = drawPoints[1];
-          if (a.x === b2.x) {
-            exprs.push({ id: 'studentLine', latex: `x=${a.x}`, color: Desmos.Colors.RED, lineWidth: 3 });
-          } else {
-            const m2 = (b2.y - a.y) / (b2.x - a.x);
-            const c2 = a.y - m2 * a.x;
-            exprs.push({ id: 'studentLine', latex: `y=${m2}x+(${c2})`, color: Desmos.Colors.RED, lineWidth: 3 });
-          }
-        }
-        exprs.push({ id: 'answerLine', latex: `y=${m}x+(${b})`, color: Desmos.Colors.BLACK, lineWidth: 3, lineStyle: Desmos.Styles.DASHED });
-      }
-      calculator.setExpressions(exprs);
-    }
-
     function makeLinearEquationQuestion() {
       const m = nonZeroInt(-5, 5);
-      const b = randInt(-8, 8);
+      const b = randInt(-6, 6);
       return {
         type: 'Equation classification',
         mode: 'choice',
         prompt: 'Is this equation linear or non-linear?',
-        contentHtml: `<div class="answer-block"><strong>Equation:</strong> y = ${formatTerm(m, 'x')} ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}</div>`,
+        bodyHtml: `<div class="math-line">${toLatexText(formatLinearText(m, b))}</div>`,
         answer: 'Linear',
-        explain: 'It is in the form y = mx + b, so it makes a straight line.'
+        explain: 'It is in the form y = mx + b, so it graphs as a straight line.',
+        graphExpressions: [{ id: 'graph', latex: `y=${m}x+(${b})`, color: Desmos.Colors.BLUE }]
       };
     }
 
     function makeNonLinearEquationQuestion() {
-      const kind = pick(['square', 'cube', 'sin', 'cos', 'tan', 'reciprocal', 'sqrt', 'product']);
-      let text = '';
-      let explain = 'It is not a straight-line rule, so it is non-linear.';
-      if (kind === 'square') text = `y = x^2 ${signed(randInt(-6, 6))}`;
-      if (kind === 'cube') text = `y = x^3 ${signed(randInt(-4, 4))}`;
-      if (kind === 'sin') text = `y = sin(x)`;
-      if (kind === 'cos') text = `y = cos(x)`;
-      if (kind === 'tan') text = `y = tan(x)`;
-      if (kind === 'reciprocal') text = `y = \frac{1}{x}`;
-      if (kind === 'sqrt') text = String.raw`y = \\sqrt{x}`;
-      if (kind === 'product') text = `y = x(x-2)`;
+      const bank = [
+        { text: 'y=x^2-3', graph: 'y=x^2-3', explain: 'A quadratic is non-linear.' },
+        { text: 'y=x^3', graph: 'y=x^3', explain: 'A cubic is non-linear.' },
+        { text: 'y=x^4-1', graph: 'y=x^4-1', explain: 'A fourth-power graph is non-linear.' },
+        { text: 'y=x^{-1}', graph: 'y=x^(-1)', explain: 'A reciprocal power is non-linear.' },
+        { text: 'y=\\frac{1}{x+1}', graph: 'y=1/(x+1)', explain: 'A reciprocal graph is non-linear.' },
+        { text: 'y=\\sqrt{x}', graph: 'y=\\sqrt{x}', explain: 'A square-root graph is non-linear.' },
+        { text: 'y=2^x', graph: 'y=2^x', explain: 'An exponential graph is non-linear.' },
+        { text: 'y=\\sin(x)', graph: 'y=\\sin(x)', explain: 'A sine graph is non-linear.' },
+        { text: 'y=\\cos(x)', graph: 'y=\\cos(x)', explain: 'A cosine graph is non-linear.' },
+        { text: 'y=\\tan(x)', graph: 'y=\\tan(x)', explain: 'A tangent graph is non-linear.' },
+        { text: 'y=x(x-2)', graph: 'y=x(x-2)', explain: 'This is not a straight-line rule.' }
+      ];
+      const q = pick(bank);
       return {
         type: 'Equation classification',
         mode: 'choice',
         prompt: 'Is this equation linear or non-linear?',
-        contentHtml: `<div class="answer-block"><strong>Equation:</strong> <span class="math">${renderMath(text)}</span></div>`,
+        bodyHtml: `<div class="math-line">${toLatexText(q.text)}</div>`,
         answer: 'Non-linear',
-        explain
+        explain: q.explain,
+        graphExpressions: [{ id: 'graph', latex: q.graph, color: Desmos.Colors.BLUE }]
       };
     }
 
@@ -548,69 +327,76 @@
       const m = nonZeroInt(-4, 4);
       const b = randInt(-5, 5);
       const xs = [-2, -1, 0, 1, 2];
-      const rows = xs.map(x => `<tr><td>${x}</td><td>${m*x+b}</td></tr>`).join('');
+      const rows = xs.map(x => `<tr><td>${x}</td><td>${m*x + b}</td></tr>`).join('');
       return {
         type: 'Table classification',
         mode: 'choice',
         prompt: 'Is this table linear or non-linear?',
-        contentHtml: `<table class="data"><tr><th>x</th><th>y</th></tr>${rows}</table>`,
+        bodyHtml: `<table class="data"><tr><th>x</th><th>y</th></tr>${rows}</table><div class="prompt-note">Check whether the y-values change by a constant amount.</div>`,
         answer: 'Linear',
-        explain: 'The y-values change by a constant amount for each +1 change in x.'
+        explain: 'The y-values change by a constant amount for each increase of 1 in x.',
+        graphExpressions: [{ id: 'graph', latex: `y=${m}x+(${b})`, color: Desmos.Colors.BLUE }]
       };
     }
 
     function makeNonLinearTableQuestion() {
-      const type = pick(['square', 'absolute', 'doubling']);
-      const xs = [-2, -1, 0, 1, 2];
-      let ys;
-      if (type === 'square') ys = xs.map(x => x*x + 1);
-      if (type === 'absolute') ys = xs.map(x => Math.abs(x) + 2);
-      if (type === 'doubling') ys = xs.map((x, i) => [1, 2, 4, 8, 16][i]);
-      const rows = xs.map((x, i) => `<tr><td>${x}</td><td>${ys[i]}</td></tr>`).join('');
+      const bank = [
+        { xs: [-2, -1, 0, 1, 2], ys: x => x*x + 1, graph: 'y=x^2+1', explain: 'The first differences are not constant.' },
+        { xs: [-2, -1, 0, 1, 2], ys: x => x*x*x, graph: 'y=x^3', explain: 'A cubic pattern does not change by one constant amount.' },
+        { xs: [-2, -1, 0, 1, 2], ys: x => x**4 - 1, graph: 'y=x^4-1', explain: 'Higher powers do not make a straight-line pattern.' },
+        { xs: [-2, -1, 0, 1, 2], ys: x => Math.abs(x) + 2, graph: 'y=|x|+2', explain: 'Absolute value is not linear.' },
+        { xs: [-2, -1, 0, 1, 2], ysValues: [1, 2, 4, 8, 16], graph: 'y=2^(x+2)', explain: 'The pattern doubles instead of increasing by one constant amount.' },
+        { xs: [-3, -2, 0, 1, 3], ys: x => 1 / (x + 1), graph: 'y=1/(x+1)', explain: 'Reciprocal patterns do not have constant first differences.' }
+      ];
+      const q = pick(bank);
+      const xs = q.xs;
+      const ys = q.ysValues ? q.ysValues : xs.map(q.ys);
+      const rows = xs.map((x, i) => `<tr><td>${x}</td><td>${trimNum(ys[i])}</td></tr>`).join('');
       return {
         type: 'Table classification',
         mode: 'choice',
         prompt: 'Is this table linear or non-linear?',
-        contentHtml: `<table class="data"><tr><th>x</th><th>y</th></tr>${rows}</table>`,
+        bodyHtml: `<table class="data"><tr><th>x</th><th>y</th></tr>${rows}</table><div class="prompt-note">Some non-linear tables can look sneaky. Check whether the change in y stays constant.</div>`,
         answer: 'Non-linear',
-        explain: 'The y-values do not change at a constant rate.'
+        explain: q.explain,
+        graphExpressions: [{ id: 'graph', latex: q.graph, color: Desmos.Colors.BLUE }]
       };
     }
 
-    function makeGraphQuestion() {
-      const linear = Math.random() < 0.5;
-      if (linear) {
+    function makeGraphClassificationQuestion() {
+      if (Math.random() < 0.45) {
         const m = nonZeroInt(-4, 4);
         const b = randInt(-6, 6);
         return {
           type: 'Graph classification',
           mode: 'choice',
           prompt: 'Look at the graph. Is it linear or non-linear?',
-          contentHtml: '<div class="answer-block">Use the graph on the right.</div>',
+          bodyHtml: `<div class="prompt-note">Use the graph on the right.</div>`,
           answer: 'Linear',
           explain: 'A straight line is linear.',
-          graphLatex: `y=${m}x+(${b})`,
-          setupGraph: true
+          graphExpressions: [{ id: 'graph', latex: `y=${m}x+(${b})`, color: Desmos.Colors.BLUE }]
         };
       }
-      const nonLinearSet = [
-        { latex: 'y=x^2-2', text: 'This curve is not a straight line.' },
-        { latex: 'y=|x|+1', text: 'This V-shape is not a straight line.' },
-        { latex: 'y=\\sin(x)', text: 'A sine wave is non-linear.' },
-        { latex: 'y=\\cos(x)', text: 'A cosine wave is non-linear.' },
-        { latex: 'y=\\tan(x)', text: 'A tangent graph is non-linear.' },
-        { latex: 'y=\\frac{1}{x}', text: 'A reciprocal graph is non-linear.' }
+      const bank = [
+        { graph: 'y=x^2-2', explain: 'This curve is not a straight line.' },
+        { graph: 'y=x^3', explain: 'A cubic graph is non-linear.' },
+        { graph: 'y=x^4-1', explain: 'A fourth-power graph is non-linear.' },
+        { graph: 'y=|x|+1', explain: 'A V-shape is non-linear.' },
+        { graph: 'y=1/x', explain: 'A reciprocal graph is non-linear.' },
+        { graph: 'y=2^x', explain: 'An exponential graph is non-linear.' },
+        { graph: 'y=\\sin(x)', explain: 'A sine graph is non-linear.' },
+        { graph: 'y=\\cos(x)', explain: 'A cosine graph is non-linear.' },
+        { graph: 'y=\\tan(x)', explain: 'A tangent graph is non-linear.' }
       ];
-      const picked = pick(nonLinearSet);
+      const q = pick(bank);
       return {
         type: 'Graph classification',
         mode: 'choice',
         prompt: 'Look at the graph. Is it linear or non-linear?',
-        contentHtml: '<div class="answer-block">Use the graph on the right.</div>',
+        bodyHtml: `<div class="prompt-note">Use the graph on the right.</div>`,
         answer: 'Non-linear',
-        explain: picked.text,
-        graphLatex: picked.latex,
-        setupGraph: true
+        explain: q.explain,
+        graphExpressions: [{ id: 'graph', latex: q.graph, color: Desmos.Colors.BLUE }]
       };
     }
 
@@ -620,22 +406,11 @@
       return {
         type: 'Graph a line',
         mode: 'draw',
-        prompt: 'Click two points to graph this equation.',
-        contentHtml: `<div class="answer-block"><strong>Equation:</strong> y = ${formatTerm(m, 'x')} ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}</div>`,
-        expected: { m, b },
-        explain: `The correct graph has slope ${m} and y-intercept ${b}.`,
-        isGraphingTask: true
+        prompt: 'Graph this equation by clicking two integer points.',
+        bodyHtml: `<div class="math-line">${toLatexText(formatLinearText(m, b))}</div>`,
+        explain: `The correct line has slope ${m} and y-intercept ${b}.`,
+        expected: { m, b }
       };
-    }
-
-    function formatTerm(coef, variable) {
-      if (coef === 1) return variable;
-      if (coef === -1) return '-' + variable;
-      return coef + variable;
-    }
-
-    function signed(n) {
-      return n >= 0 ? `+ ${n}` : `- ${Math.abs(n)}`;
     }
 
     function makeRandomQuestion() {
@@ -644,8 +419,8 @@
         makeNonLinearEquationQuestion,
         makeLinearTableQuestion,
         makeNonLinearTableQuestion,
-        makeGraphQuestion,
-        makeGraphQuestion,
+        makeGraphClassificationQuestion,
+        makeGraphClassificationQuestion,
         makeGraphingQuestion
       ];
       return pick(generators)();
@@ -654,72 +429,74 @@
     function renderQuestion() {
       clearForNewQuestion();
       currentQuestion = makeRandomQuestion();
-      questionNumberEl.textContent = questionNumber;
-      questionType.textContent = currentQuestion.type;
-      questionTitle.textContent = currentQuestion.prompt;
-      questionBody.innerHTML = currentQuestion.contentHtml;
+      questionTypeEl.textContent = currentQuestion.type;
+      questionPromptEl.textContent = currentQuestion.prompt;
+      questionBodyEl.innerHTML = currentQuestion.bodyHtml;
 
       if (currentQuestion.mode === 'choice') {
-        renderChoiceButtons();
-        if (currentQuestion.setupGraph) setGraphCurve(currentQuestion.graphLatex);
+        makeChoiceButtons();
       } else {
-        overlay.style.pointerEvents = 'auto';
-        graphTaskText.classList.remove('hidden');
-        graphTaskText.innerHTML = 'Click exactly <strong>two integer points</strong> on the graph. A dot will appear at each point, and then a line will be drawn.';
+        drawBoxEl.classList.remove('hidden');
         resetDrawBtn.classList.remove('hidden');
-        drawStatus.textContent = 'Place your first point.';
-        graphNotes.textContent = 'Blue dot = first point. Green dot = second point. Red line = your line. The graph is set for integer-point plotting. Dashed black line appears only when the answer is shown or after checking.';
+        graphNotesEl.textContent = 'Blue dot = first point. Green dot = second point. Red line = your line. Dashed black line = correct answer after checking or showing.';
+        document.getElementById('overlay').style.pointerEvents = 'auto';
       }
+
+      if (currentQuestion.type === 'Graph classification') plotReferenceGraph();
+
+      updateStats();
+      updateStars();
+      if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise([questionBodyEl]).catch(() => {});
     }
 
-    function markResult(correct) {
-      totalAnswered += 1;
+    function resetStreak() {
+      streak = 0;
+      updateStats();
+      updateStars();
+    }
+
+    function recordMark(correct) {
+      answeredCount += 1;
       if (correct) {
         correctCount += 1;
         streak = Math.min(10, streak + 1);
       } else {
         streak = 0;
       }
-      totalAnsweredEl.textContent = totalAnswered;
-      correctCountEl.textContent = correctCount;
+      updateStats();
       updateStars();
     }
 
-    function checkAnswer() {
-      if (answered) return;
-      if (currentQuestion.mode === 'choice') {
-        if (!selectedChoice) {
-          feedback.textContent = 'Select an answer first.';
-          feedback.className = 'feedback bad';
-          return;
-        }
-        answered = true;
-        nextBtn.disabled = false;
-        const correct = selectedChoice === currentQuestion.answer;
-        markResult(correct);
-        feedback.textContent = correct
-          ? `Correct. ${currentQuestion.explain}`
-          : `Incorrect. Correct answer: ${currentQuestion.answer}. ${currentQuestion.explain}`;
-        feedback.className = 'feedback ' + (correct ? 'good' : 'bad');
+    function checkChoiceAnswer() {
+      if (!selectedChoice) {
+        feedbackEl.className = 'feedback bad';
+        feedbackEl.textContent = 'Select an answer first.';
         return;
       }
-
-      if (drawPoints.length !== 2) {
-        feedback.textContent = 'Place two points first.';
-        feedback.className = 'feedback bad';
-        return;
-      }
-
-      answered = true;
+      answeredThisQuestion = true;
       nextBtn.disabled = false;
-      const [p1, p2] = drawPoints;
-      let correct = false;
+      const correct = selectedChoice === currentQuestion.answer;
+      recordMark(correct);
+      plotReferenceGraph();
+      feedbackEl.className = 'feedback ' + (correct ? 'good' : 'bad');
+      feedbackEl.textContent = correct ? `Correct. ${currentQuestion.explain}` : `Incorrect. Correct answer: ${currentQuestion.answer}. ${currentQuestion.explain}`;
+    }
 
+    function checkDrawAnswer() {
+      if (drawPoints.length !== 2) {
+        feedbackEl.className = 'feedback bad';
+        feedbackEl.textContent = 'Place two points first.';
+        return;
+      }
+      answeredThisQuestion = true;
+      nextBtn.disabled = false;
+
+      const [p1, p2] = drawPoints;
       if (p1.x === p2.x) {
-        feedback.textContent = 'Incorrect. You made a vertical line, but the equation is in the form y = mx + b.';
-        feedback.className = 'feedback bad';
-        markResult(false);
-        showCorrectGraph();
+        recordMark(false);
+        plotStudentObjects(true);
+        feedbackEl.className = 'feedback bad';
+        feedbackEl.textContent = 'Incorrect. You made a vertical line. This equation should be graphed as y = mx + b.';
         return;
       }
 
@@ -727,36 +504,37 @@
       const b = p1.y - m * p1.x;
       const slopeOK = Math.abs(m - currentQuestion.expected.m) < 0.001;
       const interceptOK = Math.abs(b - currentQuestion.expected.b) < 0.001;
-      correct = slopeOK && interceptOK;
-      markResult(correct);
-      if (correct) {
-        feedback.textContent = `Correct. Your line matches the equation. Slope = ${m}, y-intercept = ${b}.`;
-        feedback.className = 'feedback good';
-      } else {
-        feedback.textContent = `Incorrect. Your line has slope ${trimNum(m)} and y-intercept ${trimNum(b)}. ${currentQuestion.explain}`;
-        feedback.className = 'feedback bad';
-      }
-      showCorrectGraph();
+      const correct = slopeOK && interceptOK;
+      recordMark(correct);
+      plotStudentObjects(true);
+      feedbackEl.className = 'feedback ' + (correct ? 'good' : 'bad');
+      feedbackEl.textContent = correct ? `Correct. Your line has slope ${trimNum(m)} and y-intercept ${trimNum(b)}.` : `Incorrect. Your line has slope ${trimNum(m)} and y-intercept ${trimNum(b)}. ${currentQuestion.explain}`;
     }
 
-    function trimNum(n) {
-      return Number.isInteger(n) ? n : Number(n.toFixed(2));
+    function checkAnswer() {
+      if (answeredThisQuestion) return;
+      if (currentQuestion.mode === 'choice') checkChoiceAnswer();
+      else checkDrawAnswer();
     }
 
     function showAnswer() {
       if (!currentQuestion) return;
-      streak = 0;
-      updateStars();
-      answered = true;
+      if (!answeredThisQuestion) {
+        answeredCount += 1;
+        resetStreak();
+        updateStats();
+      }
+      answeredThisQuestion = true;
       nextBtn.disabled = false;
+
       if (currentQuestion.mode === 'choice') {
-        feedback.textContent = `Answer shown. Streak reset to 0. Answer: ${currentQuestion.answer}. ${currentQuestion.explain}`;
-        feedback.className = 'feedback muted';
-        if (currentQuestion.graphLatex) showCorrectGraph();
+        plotReferenceGraph();
+        feedbackEl.className = 'feedback muted';
+        feedbackEl.textContent = `Answer: ${currentQuestion.answer}. ${currentQuestion.explain} Your streak was reset because Show Answer was used.`;
       } else {
-        feedback.textContent = `Answer shown. Streak reset to 0. Answer: y = ${currentQuestion.expected.m}x ${currentQuestion.expected.b >= 0 ? '+ ' + currentQuestion.expected.b : '- ' + Math.abs(currentQuestion.expected.b)}. ${currentQuestion.explain}`;
-        feedback.className = 'feedback muted';
-        showCorrectGraph();
+        plotStudentObjects(true);
+        feedbackEl.className = 'feedback muted';
+        feedbackEl.textContent = `Answer shown. The correct line is y = ${currentQuestion.expected.m}x ${currentQuestion.expected.b >= 0 ? '+ ' + currentQuestion.expected.b : '- ' + Math.abs(currentQuestion.expected.b)}. Your streak was reset because Show Answer was used.`;
       }
     }
 
@@ -765,39 +543,36 @@
       renderQuestion();
     }
 
-    function pixelToMath(px, py) {
-      const rect = overlay.getBoundingClientRect();
+    function pixelToMath(px, py, rect) {
       const x = VIEW.left + (px / rect.width) * (VIEW.right - VIEW.left);
       const y = VIEW.top - (py / rect.height) * (VIEW.top - VIEW.bottom);
       return { x, y };
     }
 
-    overlay.addEventListener('click', (e) => {
-      if (!currentQuestion || currentQuestion.mode !== 'draw' || answered) return;
+    document.getElementById('overlay').addEventListener('click', (e) => {
+      if (!currentQuestion || currentQuestion.mode !== 'draw' || answeredThisQuestion) return;
       if (drawPoints.length >= 2) return;
-      const rect = overlay.getBoundingClientRect();
-      const raw = pixelToMath(e.clientX - rect.left, e.clientY - rect.top);
+      const rect = e.currentTarget.getBoundingClientRect();
+      const raw = pixelToMath(e.clientX - rect.left, e.clientY - rect.top, rect);
       const point = { x: Math.round(raw.x), y: Math.round(raw.y) };
       drawPoints.push(point);
-      renderStudentObjects();
-      if (drawPoints.length === 1) {
-        drawStatus.textContent = `First point placed at (${point.x}, ${point.y}). Place one more point.`;
-      } else {
-        drawStatus.textContent = `Second point placed at (${point.x}, ${point.y}). Now click Check answer.`;
-      }
+      plotStudentObjects(false);
+      feedbackEl.className = 'feedback muted';
+      feedbackEl.textContent = drawPoints.length === 1 ? `First point placed at (${point.x}, ${point.y}). Add one more point.` : `Second point placed at (${point.x}, ${point.y}). Now click Check Answer.`;
     });
 
     resetDrawBtn.addEventListener('click', () => {
+      if (!currentQuestion || currentQuestion.mode !== 'draw' || answeredThisQuestion) return;
       drawPoints = [];
-      resetCalculator();
-      drawStatus.textContent = 'Drawing reset. Place your first point.';
+      resetGraph();
+      feedbackEl.className = 'feedback muted';
+      feedbackEl.textContent = 'Drawing reset. Place two new points.';
     });
 
     checkBtn.addEventListener('click', checkAnswer);
     nextBtn.addEventListener('click', nextQuestion);
     showAnswerBtn.addEventListener('click', showAnswer);
 
-    updateStars();
     initCalculator();
     renderQuestion();
   </script>
