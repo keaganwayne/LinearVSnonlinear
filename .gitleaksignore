@@ -1,0 +1,4 @@
+# Reviewed 2026-10-31: only public Supabase client keys and browser Desmos keys.
+4e7be0d09d26befedde428ae8b895b9a6eae322f:index.html:generic-api-key:158
+465bda2a14a0dd8142194304a5a7a0ebeee244ea:backup/index.html:generic-api-key:124
+20c4a33b2d089f06a697b3e8ee8061bf00390431:index.html:generic-api-key:326
